@@ -67,12 +67,12 @@ export default function RootLayout({
                 <span>Chats</span>
               </Link>
               <Link
-                href="#"
+                href="/crear"
                 className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
                 <Users className="w-5 h-5" />
-                <span>Contacts</span>
+                <span>Crear</span>
               </Link>
               <Link
                 href="#"
