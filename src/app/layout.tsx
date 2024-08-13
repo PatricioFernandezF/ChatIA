@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
+import { Home, Users, Settings, Camera } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,13 +24,44 @@ export default function RootLayout({
             <h1 className="text-3xl font-bold text-foreground">CHATIA</h1>
           </header>
 
-          <div className="flex flex-grow">
+          <div className="flex flex-grow overflow-hidden">
             <aside className="bg-muted border-r w-64 p-4 space-y-4 overflow-y-auto">
-              {/* Aquí puedes colocar los enlaces de navegación como "Home", "Chats", etc. */}
+              <Link
+                href="/"
+                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-accent hover:text-accent-foreground"
+                prefetch={false}
+              >
+                <Home className="w-5 h-5" />
+                <span>Home</span>
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-accent hover:text-accent-foreground"
+                prefetch={false}
+              >
+                <Camera className="w-5 h-5" />
+                <span>Chats</span>
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-accent hover:text-accent-foreground"
+                prefetch={false}
+              >
+                <Users className="w-5 h-5" />
+                <span>Contacts</span>
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-accent hover:text-accent-foreground"
+                prefetch={false}
+              >
+                <Settings className="w-5 h-5" />
+                <span>Settings</span>
+              </Link>
             </aside>
-            <main className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-hidden">
               {children}
-            </main>
+            </div>
           </div>
         </div>
       </body>
