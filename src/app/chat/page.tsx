@@ -27,7 +27,7 @@ export default function ChatPage() {
   };
 
   return (
-    <main className="flex flex-col h-[calc(100vh-70px)]"> {/* Restando la altura del header */}
+    <main className="flex flex-col h-[calc(100vh-70px)]">
       <div className="flex-grow overflow-y-auto overflow-x-hidden p-4 space-y-4">
         {messages.map((message, index) => (
           <div key={index} className={`flex items-start gap-3 ${message.sender === "You" ? 'justify-end' : ''}`}>
@@ -50,15 +50,14 @@ export default function ChatPage() {
           </div>
         ))}
       </div>
-      <div className="bg-background border-t border-muted px-4 py-3 flex items-center gap-2">
+      <div className="bg-background border-t border-muted px-4 py-2 flex items-center gap-2">
         <Textarea
           placeholder="Type your message..."
-          className="flex-1 rounded-lg border-none focus:ring-0 focus:ring-offset-0"
-          rows={1}
+          className="flex-1 rounded-lg border-none focus:ring-0 focus:ring-offset-0 resize-none h-10"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <Button type="submit" onClick={handleSendMessage}>
+        <Button type="submit" onClick={handleSendMessage} className="h-10">
           <Send className="w-5 h-5" />
           <span className="sr-only">Send</span>
         </Button>
