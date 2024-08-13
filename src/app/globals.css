@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 96%; /* Fondo general claro */
+    --foreground: 0 0% 20%; /* Texto oscuro */
+    --card: 0 0% 100%; /* Fondo blanco para tarjetas */
+    --card-foreground: 0 0% 20%; /* Texto oscuro dentro de tarjetas */
+    --accent: 141 65% 50%; /* Verde de Spotify para acentos */
+    --muted: 0 0% 50%; /* Gris neutro */
+    --border: 0 0% 89.8%; /* Bordes claros */
+    --input: 0 0% 89.8%; /* Input claros */
+    --ring: 141 65% 50%; /* Verde de Spotify */
+  }
+
+  .dark {
+    --background: 0 0% 20%; /* Fondo oscuro */
+    --foreground: 0 0% 98%; /* Texto claro */
+    --card: 0 0% 25%; /* Fondo oscuro para tarjetas */
+    --card-foreground: 0 0% 98%; /* Texto claro dentro de tarjetas */
+    --accent: 141 65% 50%; /* Verde de Spotify */
+    --muted: 0 0% 70%; /* Gris oscuro para texto */
+    --border: 0 0% 30%; /* Bordes oscuros */
+    --input: 0 0% 30%; /* Input oscuros */
+    --ring: 141 65% 50%; /* Verde de Spotify */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
