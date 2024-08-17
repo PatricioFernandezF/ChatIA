@@ -1,28 +1,14 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Sun, Moon, Info, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Info, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"; 
 import Link from "next/link";
+import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function Home() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
-
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-  };
-
   const profiles = [
     { name: "John Doe", role: "Desarrollador Web", image: "/images/image1.webp" },
     { name: "Jane Smith", role: "Diseñadora UX Front", image: "/images/image2.webp" },
@@ -33,17 +19,13 @@ export default function Home() {
   ];
 
   return (
-    <TooltipProvider> {/* Asegúrate de que TooltipProvider envuelva todo donde se usen Tooltips */}
+    <TooltipProvider>
       <main className="w-full max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between mb-8">
           <p className="text-lg text-foreground flex-grow">
             Bienvenido a nuestra aplicación de perfiles de ChatIA. Aquí encontrarás a los mejores expertos en diferentes áreas, listos para ayudarte en tus proyectos. Explora y conoce a cada uno de ellos.
           </p>
-          <div className="flex items-center">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-foreground ml-4">
-              {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-            </Button>
-          </div>
+
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {profiles.map((profile, index) => (
