@@ -14,15 +14,43 @@ export default function ChatPage() {
 
   const [inputValue, setInputValue] = useState<string>("");
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputValue.trim() !== "") {
       const newMessage = {
         text: inputValue,
         sender: "You",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
+
+      // Actualiza la lista de mensajes con el nuevo mensaje
       setMessages([...messages, newMessage]);
+
+      // Limpia el input
       setInputValue("");
+
+      try {
+        // Llamada a la API de Ollama
+        const res = await fetch('/api/ollama', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt: inputValue }),
+        });
+
+        const data = await res.json();
+
+        // Agregar la respuesta de Ollama a los mensajes
+        const ollamaMessage = {
+          text: data.response, // Ajusta según la estructura de respuesta de Ollama
+          sender: "Ollama",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setMessages(prevMessages => [...prevMessages, ollamaMessage]);
+      } catch (error) {
+        console.error('Error al comunicarse con Ollama:', error);
+      }
     }
   };
 
