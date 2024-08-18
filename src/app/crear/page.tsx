@@ -1,18 +1,20 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 
 export default function CreateProfile() {
   const [profileData, setProfileData] = useState({
-    name: '',
-    description: '',
-    image: null,
+    nombre: '',
+    descCorta: '',
+    info: '',
+    sistema: '',
+    imagen: null,
   });
+  const [uploading, setUploading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,14 +27,42 @@ export default function CreateProfile() {
   const handleImageChange = (e) => {
     setProfileData({
       ...profileData,
-      image: e.target.files[0],
+      imagen: e.target.files[0],
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para enviar los datos a tu backend o API
-    console.log(profileData);
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('nombre', profileData.nombre);
+      formData.append('descCorta', profileData.descCorta);
+      formData.append('info', profileData.info);
+      formData.append('sistema', profileData.sistema);
+      if (profileData.imagen) {
+        formData.append('imagen', profileData.imagen);
+      }
+
+      const response = await fetch('/api/profiles', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('Perfil creado exitosamente');
+        setProfileData({ nombre: '', descCorta: '', info: '', sistema: '', imagen: null });
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error al crear el perfil:', error);
+      alert('Error al crear el perfil');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -44,20 +74,30 @@ export default function CreateProfile() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <Label htmlFor="image">Imagen de perfil</Label>
-            <Input type="file" id="image" name="image" onChange={handleImageChange} accept="image/*" className="mt-1 block w-full" />
+            <Label htmlFor="imagen">Imagen de perfil</Label>
+            <Input type="file" id="imagen" name="imagen" onChange={handleImageChange} accept="image/*" className="mt-1 block w-full" />
           </div>
           <div>
-            <Label htmlFor="name">Nombre</Label>
-            <Input type="text" id="name" name="name" value={profileData.name} onChange={handleInputChange} required className="mt-1 block w-full" />
+            <Label htmlFor="nombre">Nombre</Label>
+            <Input type="text" id="nombre" name="nombre" value={profileData.nombre} onChange={handleInputChange} required className="mt-1 block w-full" />
+          </div>
+          <div>
+            <Label htmlFor="descCorta">Descripción Corta</Label>
+            <Input type="text" id="descCorta" name="descCorta" value={profileData.descCorta} onChange={handleInputChange} required className="mt-1 block w-full" />
+          </div>
+          <div>
+            <Label htmlFor="sistema">Sistema</Label>
+            <Input type="text" id="sistema" name="sistema" value={profileData.sistema} onChange={handleInputChange} className="mt-1 block w-full" />
           </div>
         </div>
         <div>
-          <Label htmlFor="description">Descripción</Label>
-          <Textarea id="description" name="description" value={profileData.description} onChange={handleInputChange} required className="mt-1 block w-full" />
+          <Label htmlFor="info">Información Adicional</Label>
+          <Textarea id="info" name="info" value={profileData.info} onChange={handleInputChange} className="mt-1 block w-full" />
         </div>
         <div className="flex justify-end">
-          <Button type="submit" variant="primary" className="mt-4">Crear Perfil</Button>
+          <Button type="submit" variant="primary" className="mt-4" disabled={uploading}>
+            {uploading ? 'Subiendo...' : 'Crear Perfil'}
+          </Button>
         </div>
       </form>
     </main>
