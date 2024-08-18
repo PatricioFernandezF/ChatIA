@@ -61,6 +61,13 @@ export default function ChatPage() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <main className="flex flex-col h-[calc(100vh-70px)]">
       <div className="flex-grow overflow-y-auto overflow-x-hidden p-4 space-y-4">
@@ -91,6 +98,7 @@ export default function ChatPage() {
           className="flex-1 rounded-lg border-none focus:ring-0 focus:ring-offset-0 resize-none h-10"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown} // Captura el evento de teclado
         />
         <Button type="submit" onClick={handleSendMessage} className="h-10">
           <Send className="w-5 h-5" />
