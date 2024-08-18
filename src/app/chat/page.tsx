@@ -7,10 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState([
-  ]);
-
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState<string>("");
+  const [context, setContext] = useState([]);  // Almacena el historial de la conversación
 
   const handleSendMessage = async () => {
     if (inputValue.trim() !== "") {
@@ -22,6 +21,9 @@ export default function ChatPage() {
 
       // Actualiza la lista de mensajes con el nuevo mensaje
       setMessages([...messages, newMessage]);
+
+      // Actualiza el contexto con el nuevo mensaje del usuario
+      const updatedContext = [...context, { role: "user", content: inputValue }];
 
       // Limpia el input
       setInputValue("");
@@ -35,23 +37,8 @@ export default function ChatPage() {
           },
           body: JSON.stringify({ 
             prompt: inputValue, 
-            system: `Eres un modelo de lenguaje entrenado por OpenAI. Tu tarea es ayudar al usuario respondiendo a sus preguntas y proporcionándole información precisa y útil en todo momento. A continuación, se te presentan algunas pautas para que guíes tus respuestas:
-
-            1. Proporciona Información Precisa y Clara: Responde a las preguntas del usuario de manera precisa, concisa y bien estructurada. Evita divagar o proporcionar información innecesaria.
-
-            2. Sé Amigable y Profesional: Mantén un tono amigable, respetuoso y profesional en todas tus interacciones. Asegúrate de que el usuario se sienta escuchado y comprendido.
-
-            3. Sé Neutral y Objetivo: Evita emitir opiniones personales o juicios de valor. Tu función es proporcionar información basada en datos y hechos.
-
-            4. Clarifica y Profundiza si es Necesario: Si el usuario hace una pregunta ambigua o poco clara, solicita más detalles antes de proporcionar una respuesta. Si se te pide profundizar en un tema, ofrece información adicional de manera ordenada.
-
-            5. Gestiona Solicitudes Complejas: Si el usuario realiza una solicitud compleja o extensa, considera desglosarla en pasos más manejables y explica el proceso con claridad.
-
-            6. Evita Contenidos Sensibles: No generes contenido inapropiado, ofensivo o perjudicial. Mantén siempre un enfoque en la seguridad y el bienestar del usuario.
-
-            7. Responde en el Idioma Solicitado: Asegúrate de responder en el idioma en que se te ha planteado la pregunta o en el que el usuario lo solicite.
-
-            8. Mantén la Coherencia: Asegúrate de que tus respuestas sean coherentes y no contradictorias con respecto a respuestas anteriores dadas en la misma conversación.`
+            system: 'Eres un modelo de lenguaje y vas a ayudarme',
+            context: updatedContext  // Envía el contexto actualizado
           }),
         });
 
@@ -59,12 +46,15 @@ export default function ChatPage() {
 
         // Agregar la respuesta de Ollama a los mensajes
         const ollamaMessage = {
-          text: data.response, // Ajusta según la estructura de respuesta de Ollama
+          text: data.response,  // Ajusta según la estructura de respuesta de Ollama
           sender: "Ollama",
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
+        // Actualiza los mensajes y el contexto
         setMessages(prevMessages => [...prevMessages, ollamaMessage]);
+        setContext([...updatedContext, { role: "assistant", content: data.response }]);  // Actualiza el contexto con la respuesta del asistente
+
       } catch (error) {
         console.error('Error al comunicarse con Ollama:', error);
       }
