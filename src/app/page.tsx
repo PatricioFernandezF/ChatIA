@@ -54,7 +54,7 @@ export default function Home() {
               >
                 <Card className="bg-card text-card-foreground border">
                   <div className="relative h-60 overflow-hidden rounded-lg">
-                    <Link href="/chat">
+                    <Link href={`/chat/${profile.id}`}>
                       <img
                         src={profile.imagen} // Utiliza la URL de la imagen almacenada en Firestore
                         alt={`Perfil de ${profile.nombre || 'Desconocido'}`}
@@ -75,7 +75,7 @@ export default function Home() {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent sideOffset={5}>
-                        <p>Más información sobre el perfil</p>
+                        <p>{profile.info}</p>
                       </TooltipContent>
                     </Tooltip>
                   </div>

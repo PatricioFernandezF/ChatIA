@@ -4,18 +4,23 @@ export async function POST(req) {
   try {
     const { prompt, system, selectedTag, context } = await req.json();
 
-    // Construir el historial de mensajes incluyendo el contexto previo
-    const messages = [
+    // Si el contexto ya incluye el último mensaje del usuario, no lo agregues de nuevo
+    let messages = [
       {
         role: "system",
         content: system
       },
-      ...(context || []),  // Agregar el contexto previo si existe
-      {
+      ...(context || [])
+    ];
+
+    // Verifica si el último mensaje en el contexto no es el mismo que el prompt actual
+    if (!context || context.length === 0 || context[context.length - 1].content !== prompt) {
+      messages.push({
         role: "user",
         content: prompt
-      }
-    ];
+      });
+    }
+
 
     const requestBody = JSON.stringify({
       model: "llama3.1",
@@ -55,8 +60,7 @@ export async function POST(req) {
 
     // Agregar la respuesta del asistente al contexto para futuros mensajes
     const updatedContext = [
-      ...(context || []),
-      { role: "user", content: prompt },
+      ...messages,
       { role: "assistant", content: combinedResponse }
     ];
 

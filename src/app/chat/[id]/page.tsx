@@ -1,15 +1,45 @@
-"use client";
+'use client'
 
-import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 
 export default function ChatPage() {
+  const { id } = useParams();  // Captura el ID desde la URL
+
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [context, setContext] = useState([]);  // Almacena el historial de la conversación
+  const [sistema, setSistema] = useState<string>("");  // Estado para almacenar `profile.sistema`
+  const [loading, setLoading] = useState(true);  // Estado para manejar la carga
+  const [imagen, setImagen] = useState<string>(""); // Estado para almacenar `profile.imagen`
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/firestore?id=${id}`); // Corregir la URL para usar parámetros de consulta
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        console.log(result);
+        setSistema(result.data.sistema); // Accediendo a la propiedad 'sistema' del resultado
+        setImagen(result.data.imagen); // Accediendo a la propiedad 'imagen' del resultado
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to load data.');
+      }
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
 
   const handleSendMessage = async () => {
     if (inputValue.trim() !== "") {
@@ -37,8 +67,9 @@ export default function ChatPage() {
           },
           body: JSON.stringify({ 
             prompt: inputValue, 
-            system: 'Eres un modelo de lenguaje y vas a ayudarme',
-            context: updatedContext  // Envía el contexto actualizado
+            system: `${sistema}`,  // Incluye `profile.sistema` en el campo `system`
+            context: updatedContext,  // Envía el contexto actualizado
+            id: id  // Puedes enviar el ID si es necesario para la lógica de la API
           }),
         });
 
@@ -71,16 +102,18 @@ export default function ChatPage() {
   return (
     <main className="flex flex-col h-[calc(100vh-70px)]">
       <div className="flex-grow overflow-y-auto overflow-x-hidden p-4 space-y-4">
+
+        {error ? <p>{error}</p> : null}  {/* Muestra un mensaje de error si lo hay */}
         {messages.map((message, index) => (
           <div key={index} className={`flex items-start gap-3 ${message.sender === "You" ? 'justify-end' : ''}`}>
             {message.sender !== "You" && (
               <Avatar className="w-8 h-8 border">
-                <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
+                <AvatarImage src={imagen} alt="@shadcn" />
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
             )}
             <div className={`rounded-lg p-3 max-w-[70%] ${message.sender === "You" ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-              <p>{message.text}</p>
+              <ReactMarkdown>{message.text}</ReactMarkdown>
               <div className="text-xs mt-1">{message.time}</div>
             </div>
             {message.sender === "You" && (
